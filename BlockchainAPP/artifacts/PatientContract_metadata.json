@@ -1,0 +1,145 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_recordHash",
+						"type": "string"
+					}
+				],
+				"name": "addOrUpdateRecord",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "patients",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "firstName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "lastName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "birthDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "addressDetails",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "patientAddress",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_firstName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_lastName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_birthDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_addressDetails",
+						"type": "string"
+					}
+				],
+				"name": "registerPatient",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patientAddress",
+						"type": "address"
+					}
+				],
+				"name": "viewMedicalRecord",
+				"outputs": [
+					{
+						"internalType": "string[]",
+						"name": "",
+						"type": "string[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"BlockchainAPP/PatientContract.sol": "PatientContract"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"BlockchainAPP/PatientContract.sol": {
+			"keccak256": "0xe0613f01fa662251f1e7b8ac1e98950b06177afd83f94491e231a0dfdccd1afe",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3c4c54bfbccb67ee7332b0c9929e976216c4e9c730a6bf8d62b41a6bb84a7a0d",
+				"dweb:/ipfs/QmSDjuuppyPefwHLE61ryfvXPzhQwkEBjUUm6CpKQea7kL"
+			]
+		}
+	},
+	"version": 1
+}
