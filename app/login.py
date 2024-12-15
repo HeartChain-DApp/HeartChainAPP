@@ -1,21 +1,13 @@
+from PyQt5.QtWidgets import (QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow, QWidget)
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QScrollArea
+import os
 from web3 import Web3
 
-# MetaMask provider setup
-METAMASK_PROVIDER = "http://127.0.0.1:8545"  # Replace with your provider
-web3 = Web3(Web3.HTTPProvider(METAMASK_PROVIDER))
+# Load environment variable
 
-# Check connection to the Ethereum network
-if not web3.is_connected():
-    print("Unable to connect to the Ethereum network.")
-    sys.exit(1)
+CONTRACT_ADDRESS = "0x5e17b14ADd6c386305A32928F985b29bbA34Eff5"
 
-print("Connected to the Ethereum network.")
-
-# Smart contract details
-CONTRACT_ADDRESS = "0xd0F350b13465B5251bb03E4bbf9Fa1DbC4a378F3"  # Replace with your deployed contract address
-ABI =[
+CONTRACT_ABI = [
 	{
 		"inputs": [
 			{
@@ -450,88 +442,118 @@ ABI =[
 		"type": "function"
 	}
 ]
+# Initialize web3
+web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
 
-# Connect to contract
-contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=ABI)
+if not web3.is_connected():
+    print("Web3 is not connected. Check your provider and network configuration.")
 
-def fetch_doctors():
-    """Fetch all doctors' addresses from the contract."""
-    try:
-        # Fetch all doctor addresses
-        doctor_addresses = contract.functions.viewAllDoctors().call()
-        return doctor_addresses
-    except Exception as e:
-        print(f"Error fetching doctors: {e}")
-        return []
+contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 
-def fetch_patients():
-    """Fetch all patients' addresses from the contract."""
-    try:
-        # Fetch all patient addresses
-        patient_addresses = contract.functions.viewAllPatients().call()
-        return patient_addresses
-    except Exception as e:
-        print(f"Error fetching patients: {e}")
-        return []
-
-class MainWindow(QMainWindow):
+class RegistrationWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Doctors and Patients Viewer")
-        self.setGeometry(100, 100, 800, 600)
+        self.setWindowTitle("Patient Registration")
+        self.setGeometry(100, 100, 800, 400)
 
-        # Central widget
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout()
+        # Main widget
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
+        main_widget.setStyleSheet("background-color: #2c2c2c;")
 
-        # Add Doctors Label and Data
-        self.doctors_label = QLabel("Doctors:")
-        self.doctors_label.setStyleSheet("font-size: 20px; font-weight: bold;")
-        layout.addWidget(self.doctors_label)
+        # Left side: Welcome label
+        left_layout = QVBoxLayout()
+        welcome_label = QLabel("Welcome")
+        welcome_label.setStyleSheet("font-size: 36px; font-weight: bold; color: white;")
+        left_layout.addWidget(welcome_label)
+        left_layout.addStretch()
 
-        # Add Scroll Area for doctors
-        self.doctors_scroll_area = QScrollArea(self)
-        self.doctors_scroll_area.setWidgetResizable(True)
-        self.doctors_list_widget = QWidget()
-        self.doctors_scroll_area.setWidget(self.doctors_list_widget)
-        doctors_layout = QVBoxLayout(self.doctors_list_widget)
-        
-        # Fetch doctors and display in the scrollable area
-        doctor_addresses = fetch_doctors()
-        for doctor_address in doctor_addresses:
-            doctor_label = QLabel(f"Doctor Address: {doctor_address}")
-            doctors_layout.addWidget(doctor_label)
+        # Right side: Input fields and Register button
+        right_layout = QVBoxLayout()
 
-        layout.addWidget(self.doctors_scroll_area)
+        first_name_label = QLabel("First Name")
+        first_name_label.setStyleSheet("color: white; font-size: 16px;")
+        self.first_name_input = QLineEdit()
+        self.first_name_input.setPlaceholderText("Enter your first name")
+        self.first_name_input.setStyleSheet("background-color: #1c1c1c; color: #00bfff; padding: 5px; font-size: 16px; border: none;")
 
-        # Add Patients Label and Data
-        self.patients_label = QLabel("Patients:")
-        self.patients_label.setStyleSheet("font-size: 20px; font-weight: bold;")
-        layout.addWidget(self.patients_label)
+        last_name_label = QLabel("Last Name")
+        last_name_label.setStyleSheet("color: white; font-size: 16px;")
+        self.last_name_input = QLineEdit()
+        self.last_name_input.setPlaceholderText("Enter your last name")
+        self.last_name_input.setStyleSheet("background-color: #1c1c1c; color: #00bfff; padding: 5px; font-size: 16px; border: none;")
 
-        # Add Scroll Area for patients
-        self.patients_scroll_area = QScrollArea(self)
-        self.patients_scroll_area.setWidgetResizable(True)
-        self.patients_list_widget = QWidget()
-        self.patients_scroll_area.setWidget(self.patients_list_widget)
-        patients_layout = QVBoxLayout(self.patients_list_widget)
-        
-        # Fetch patients and display in the scrollable area
-        patient_addresses = fetch_patients()
-        for patient_address in patient_addresses:
-            patient_label = QLabel(f"Patient Address: {patient_address}")
-            patients_layout.addWidget(patient_label)
+        birth_date_label = QLabel("Birth Date")
+        birth_date_label.setStyleSheet("color: white; font-size: 16px;")
+        self.birth_date_input = QLineEdit()
+        self.birth_date_input.setPlaceholderText("Enter your birth date (e.g., 19900101)")
+        self.birth_date_input.setStyleSheet("background-color: #1c1c1c; color: #00bfff; padding: 5px; font-size: 16px; border: none;")
 
-        layout.addWidget(self.patients_scroll_area)
+        address_details_label = QLabel("Address Details")
+        address_details_label.setStyleSheet("color: white; font-size: 16px;")
+        self.address_details_input = QLineEdit()
+        self.address_details_input.setPlaceholderText("Enter your address details")
+        self.address_details_input.setStyleSheet("background-color: #1c1c1c; color: #00bfff; padding: 5px; font-size: 16px; border: none;")
 
-        central_widget.setLayout(layout)
+        register_button = QPushButton("Register")
+        register_button.setStyleSheet("background-color: #007acc; color: white; font-size: 16px; padding: 10px; border-radius: 5px;")
+        register_button.clicked.connect(self.handle_register)
 
-def main():
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+        # Add widgets to right layout
+        right_layout.addWidget(first_name_label)
+        right_layout.addWidget(self.first_name_input)
+        right_layout.addWidget(last_name_label)
+        right_layout.addWidget(self.last_name_input)
+        right_layout.addWidget(birth_date_label)
+        right_layout.addWidget(self.birth_date_input)
+        right_layout.addWidget(address_details_label)
+        right_layout.addWidget(self.address_details_input)
+        right_layout.addWidget(register_button)
+        right_layout.addStretch()
+
+        # Main layout
+        main_layout = QHBoxLayout()
+        main_layout.addLayout(left_layout, stretch=1)
+        main_layout.addLayout(right_layout, stretch=2)
+
+        main_widget.setLayout(main_layout)
+
+    def handle_register(self):
+        # Get input values
+        first_name = self.first_name_input.text()
+        last_name = self.last_name_input.text()
+        birth_date = self.birth_date_input.text()
+        address_details = self.address_details_input.text()
+
+        # Validate inputs
+        if not (first_name and last_name and birth_date.isdigit() and address_details):
+            print("Please fill in all fields correctly.")
+            return
+
+        # Ensure address_details is a valid string
+        if not isinstance(address_details, str) or not address_details.strip():
+            print("Invalid address details.")
+            return
+
+        try:
+            # Call the smart contract function
+            tx_hash = contract.functions.registerPatient(
+                first_name, 
+                last_name, 
+                int(birth_date), 
+                address_details
+            ).transact({'from': web3.eth.default_account or '0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba'})
+
+            
+            print(f"Transaction hash: {tx_hash}")
+            
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
 
 if __name__ == "__main__":
-    main()
+    app = QApplication(sys.argv)
+    window = RegistrationWindow()
+    window.show()
+    sys.exit(app.exec_())

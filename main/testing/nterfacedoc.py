@@ -13,7 +13,7 @@ if not web3.is_connected():
 print("Connected to Ethereum network.")
 
 # Smart contract details
-CONTRACT_ADDRESS = "0x95bD8D42f30351685e96C62EDdc0d0613bf9a87A"  # Replace with your deployed contract address
+CONTRACT_ADDRESS = "0xd0F350b13465B5251bb03E4bbf9Fa1DbC4a378F3"  # Replace with your deployed contract address
 ABI = [
 	{
 		"inputs": [

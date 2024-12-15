@@ -1,18 +1,152 @@
 from web3 import Web3
+import json
+import sys
 
-# Connect to the Ethereum node (make sure MetaMask is running)
+# Connect to the Ethereum node (MetaMask or Ganache or other local nodes)
 METAMASK_PROVIDER = "http://127.0.0.1:8545"
 web3 = Web3(Web3.HTTPProvider(METAMASK_PROVIDER))
 
-if not web3.is_connected():
-    print("Unable to connect to Ethereum network.")
-    exit()
+# Check if connected
+if web3.is_connected():
+    print("Connected to Ethereum network!")
+else:
+    print("Failed to connect to Ethereum network.")
+    sys.exit(1)
 
-print("Connected to Ethereum network.")
+# Function to register a patient
+def register_patient(contract_address, contract_abi, first_name, last_name, birth_date, address_details):
+    # Set up the contract
+    contract = web3.eth.contract(address=contract_address, abi=contract_abi)
+    
+    # Get the default account (or prompt user to enter one)
+    sender_address = web3.eth.accounts[0]
+    print(f"Using account: {sender_address}")
+    try:            # Call the viewAllPatients function to get all patient addresses
+        patient_addresses = contract.functions.viewAllPatients().call()
+        if not patient_addresses:
+            print("No patients found.")
+        else:
+            print("Patient addresses:")
+            for address in patient_addresses:
+                print(address)
+        
+    except Exception as e:
+            print(f"An error occurred: {e}")
 
-# Smart contract details
-CONTRACT_ADDRESS = "0xa196769Ca67f4903eCa574F5e76e003071A4d84a"  # Replace with your deployed contract address
-ABI = [
+    
+    # Create transaction
+    try:
+        tx_hash = contract.functions.registerPatient(
+            first_name,
+            last_name,
+            int(birth_date),  # Convert birth date to uint256
+            address_details
+        ).transact({'from': sender_address})
+        
+        # Wait for the transaction to be mined
+        receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+        
+        print(f"Transaction successful with hash: {tx_hash.hex()}")
+        print(f"Transaction receipt: {receipt}")
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Main function
+def main():
+    # Hardcoded contract address and ABI
+    contract_address = "0xd0F350b13465B5251bb03E4bbf9Fa1DbC4a378F3"  # Replace with your contract address
+    contract_abi = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_recordHash",
+				"type": "string"
+			}
+		],
+		"name": "addOrUpdateRecord",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "doctorAddress",
+				"type": "address"
+			}
+		],
+		"name": "authorizeAccess",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_firstName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_lastName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_specialty",
+				"type": "string"
+			}
+		],
+		"name": "registerDoctor",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_firstName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_lastName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_birthDate",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_addressDetails",
+				"type": "string"
+			}
+		],
+		"name": "registerPatient",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "doctorAddress",
+				"type": "address"
+			}
+		],
+		"name": "revokeAccess",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
 	{
 		"inputs": [
 			{
@@ -35,19 +169,6 @@ ABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_recordHash",
-				"type": "string"
-			}
-		],
-		"name": "addOrUpdateRecord",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -87,19 +208,6 @@ ABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "doctorAddress",
-				"type": "address"
-			}
-		],
-		"name": "authorizeAccess",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -252,70 +360,6 @@ ABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_firstName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_lastName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_specialty",
-				"type": "string"
-			}
-		],
-		"name": "registerDoctor",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_firstName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_lastName",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_birthDate",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_addressDetails",
-				"type": "string"
-			}
-		],
-		"name": "registerPatient",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "doctorAddress",
-				"type": "address"
-			}
-		],
-		"name": "revokeAccess",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "viewAllAudits",
 		"outputs": [
@@ -447,43 +491,18 @@ ABI = [
 		"type": "function"
 	}
 ]
-
-contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=ABI)
-
-
-# Fetch doctors and patients from the contract
-def fetch_doctors():
-    try:
-        doctor_addresses = contract.functions.viewAllDoctors().call()
-        print("Doctors:")
-        for addr in doctor_addresses:
-            doctor = contract.functions.doctors(addr).call()
-            print(f"Address: {addr}, First Name: {doctor[0]}, Last Name: {doctor[1]}, Specialty: {doctor[2]}")
-        
-        # Take a doctor address input from the user and fetch their details
-        doctor_address = input("Enter the doctor address to fetch details: ")
-        if web3.isAddress(doctor_address):
-            doctor_details = contract.functions.doctors(doctor_address).call()
-            print(f"Doctor Details for Address {doctor_address}:")
-            print(f"First Name: {doctor_details[0]}")
-            print(f"Last Name: {doctor_details[1]}")
-            print(f"Specialty: {doctor_details[2]}")
-        else:
-            print("Invalid address format.")
     
-    except Exception as e:
-        print(f"Error fetching doctors: {e}")
+    # Get patient details from user input
+    first_name = input("Enter patient's first name: ")
+    last_name = input("Enter patient's last name: ")
+    birth_date = input("Enter patient's birth date (YYYY-MM-DD): ")
+    address_details = input("Enter patient's address details: ")
 
-def fetch_patients():
-    try:
-        patient_addresses = contract.functions.viewAllPatients().call()
-        print("Patients:")
-        for addr in patient_addresses:
-            patient = contract.functions.patients(addr).call()
-            print(f"Address: {addr}, First Name: {patient[0]}, Last Name: {patient[1]}, Birth Date: {patient[2]}, Address: {patient[3]}")
-    except Exception as e:
-        print(f"Error fetching patients: {e}")
+
+    # Register the patient
+    register_patient(contract_address, contract_abi, first_name, last_name, birth_date, address_details)
+
+
 
 if __name__ == "__main__":
-    fetch_doctors()
-    fetch_patients()
+    main()
