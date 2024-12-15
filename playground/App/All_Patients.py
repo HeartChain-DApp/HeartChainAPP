@@ -14,7 +14,7 @@ def fetch_and_save_patient_data():
     print("Connected to the Ethereum provider.")
 
     # Contract ABI and address (replace with actual values)
-    contract_address = "0x5FbDB2315678afecb367f032d93F642f64180aa3"  # Replace with your contract address
+    contract_address = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"  # Replace with your contract address
     contract_abi = [
         {
             "inputs": [],
