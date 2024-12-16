@@ -25,7 +25,7 @@ contract_abi = [
 ]
 contract_address = "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB"
 
-private_key = "0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82"
+private_key = "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
 account = web3.eth.account.from_key(private_key)
 
 sender_address = account.address
