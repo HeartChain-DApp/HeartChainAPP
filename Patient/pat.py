@@ -29,8 +29,6 @@ class MainApp(tk.Tk):
             widget.destroy()
 
 
-
-        # Update content based on the button clicked
         if text == "Home":
             self.show_home()
         elif text == "View Medical History":
