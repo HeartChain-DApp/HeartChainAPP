@@ -4,7 +4,7 @@ from listingfollowing import fetch_patients_following_doctor
 def show_medical_records():
     doctor_index = 0
     patients = fetch_patients_following_doctor(doctor_index)
-
+    print(patients)
     METAMASK_PROVIDER = "http://127.0.0.1:8545"  # Replace with your provider
     web3 = Web3(Web3.HTTPProvider(METAMASK_PROVIDER))
 

@@ -1,5 +1,6 @@
 from web3 import Web3
 from datetime import datetime
+from listingfollowing import fetch_patients_following_doctor
 
 def fetch_patients_following_doctor(index):
     """Fetch and return the list of patients following a doctor using the doctor's index."""

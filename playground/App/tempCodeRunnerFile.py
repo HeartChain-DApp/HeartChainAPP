@@ -1,43 +1,32 @@
-def show_medical_history(self):
-        label = tk.Label(self.content_frame, text="Medical History", font=("Arial", 24))
+        label = tk.Label(self.content_frame, text="Welcome to the Home page!", font=("Arial", 24))
         label.pack(pady=20)
 
-        # Create a Treeview widget for displaying the medical records
-        tree = ttk.Treeview(self.content_frame, columns=("Patient Name", "Medical Record"), show="headings")
-        tree.heading("Patient Name", text="Patient Name")
-        tree.heading("Medical Record", text="Medical Record")
+        # Open and resize the images using Pillow
+        img1 = Image.open("/Users/mac/Desktop/MST AISD/S3/Blockchain/Pr Ikram Ben abdelouahab/HeartChainAPP/a1.png")
+        img2 = Image.open("/Users/mac/Desktop/MST AISD/S3/Blockchain/Pr Ikram Ben abdelouahab/HeartChainAPP/a2.png")
 
-        # Add a vertical scrollbar
-        scrollbar = ttk.Scrollbar(self.content_frame, orient="vertical", command=tree.yview)
-        tree.configure(yscrollcommand=scrollbar.set)
-        scrollbar.pack(side="right", fill="y")
+        # Resize the images to a smaller size (for example, 200x200 pixels)
+        img1_resized = img1.resize((200, 200))  # Resize to 200x200
+        img2_resized = img2.resize((200, 200))  # Resize to 200x200
 
-        # Pack the treeview
-        tree.pack(pady=10, fill="both", expand=True)
+        # Convert the resized images to Tkinter-compatible format
+        img1_tk = ImageTk.PhotoImage(img1_resized)
+        img2_tk = ImageTk.PhotoImage(img2_resized)
 
-        # Fetch and display medical records
-        patients = show_medical_records()  # Call the imported function
-        print(f"Fetched patients: {patients}")  # Debugging output to check what is returned
+        # Create a frame to hold the images
+        image_frame = tk.Frame(self.content_frame)
+        image_frame.pack(pady=10)
 
-        if not patients:  # Check if patients list is empty
-            print("No patients found.")
-            tree.insert("", "end", values=("No patients found", ""))
-        else:
-            for patient in patients:
-                patient_name = f"{patient['first_name']} {patient['last_name']}"
-                print(f"Processing patient: {patient_name}")  # Debugging output
-                try:
-                    medical_records = patient.get('medical_records', [])
+        # Place the first image on the left
+        img_label1 = tk.Label(image_frame, image=img1_tk)
+        img_label1.image = img1_tk  # Keep reference to avoid garbage collection
+        img_label1.pack(side="left", padx=10)
 
-                    if not medical_records:
-                        tree.insert("", "end", values=(patient_name, "No records found"))
-                        print(f"No records found for {patient_name}")  # Debugging output
-                    else:
-                        # Join medical records into a single string to fit into the Treeview cell
-                        medical_record_text = " | ".join(medical_records)
-                        tree.insert("", "end", values=(patient_name, medical_record_text))
-                        print(f"Medical records for {patient_name}: {medical_record_text}")  # Debugging output
+        # Place the second image on the right
+        img_label2 = tk.Label(image_frame, image=img2_tk)
+        img_label2.image = img2_tk  # Keep reference to avoid garbage collection
+        img_label2.pack(side="right", padx=10)
 
-                except Exception as e:
-                    print(f"Error processing patient {patient_name}: {str(e)}")  # Debugging output
-                    tree.insert("", "end", values=(patient_name, f"Error: {str(e)}"))
+        # Display the "Welcome back Doctor" message in the center
+        welcome_label = tk.Label(self.content_frame, text="Welcome back Doctor", font=("Arial", 24), fg="green")
+        welcome_label.pack(pady=20)
